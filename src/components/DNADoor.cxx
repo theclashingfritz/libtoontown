@@ -5,18 +5,15 @@
 
 TypeHandle DNADoor::_type_handle;
 
-DNADoor::DNADoor(const std::string& name): DNAGroup(name), m_code(""),
-                                           m_color(LVecBase4f(1))
-{
+DNADoor::DNADoor(const std::string& name): DNAGroup(name), m_code(""), m_color(LVecBase4f(1)) {
 }
 
-DNADoor::~DNADoor()
-{
+DNADoor::~DNADoor() {
 }
 
 void DNADoor::setup_door(NodePath door_np, NodePath parent_np, NodePath door_origin,
-                         DNAStorage* store, block_number_t block, LVecBase4f& color)
-{
+                         DNAStorage* store, block_number_t block, LVecBase4f& color) {
+    
     NodePath left_hole, left_hole_geom, right_hole, right_hole_geom,
              left_door, right_door, door_flat, door_trigger, store_np;
     door_np.set_pos_hpr_scale(door_origin, LVecBase3f(0), LVecBase3f(0), LVecBase3f(1));
@@ -82,15 +79,13 @@ void DNADoor::setup_door(NodePath door_np, NodePath parent_np, NodePath door_ori
     store->store_block_door(block, store_np);
 }
 
-void DNADoor::make_from_dgi(DatagramIterator& dgi, DNAStorage* store)
-{
+void DNADoor::make_from_dgi(DatagramIterator& dgi, DNAStorage* store) {
     DNAGroup::make_from_dgi(dgi, store);
     m_code = dgi.get_string();
     m_color = DGI_EXTRACT_COLOR;
 }
 
-void DNADoor::traverse(NodePath& np, DNAStorage* store)
-{
+void DNADoor::traverse(NodePath& np, DNAStorage* store) {
     NodePath front_node = np.find("**/*_front");
     if (!front_node.get_node(0)->is_geom_node())
         front_node = front_node.find("**/+GeomNode");
@@ -106,4 +101,17 @@ void DNADoor::traverse(NodePath& np, DNAStorage* store)
     
     setup_door(node.copy_to(front_node), np, np.find("**/*door_origin"), store,
                atoi(store->get_block(np.get_name()).c_str()), m_color);
+}
+
+void DNADoor::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
+    out << "door [\n";
+    indent(out, nbyte + 1);
+    out << "code [ \"" << m_code << "\" ]\n";
+    if (m_color != LVecBase4f(1)) {
+        indent(out, nbyte + 1);
+        out << "color [ " << m_color[0] << " " << m_color[1] << " " << m_color[2] << " " << m_color[3] << " ]\n";
+    }
+    indent(out, nbyte);
+    out << "]\n";
 }

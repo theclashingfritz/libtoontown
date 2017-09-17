@@ -85,8 +85,11 @@ PT(Texture) DNAStreet::get_texture(const std::string& texture, DNAStorage* store
 }
 
 void DNAStreet::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
     out << "street \"" << m_name << "\" [\n";
+    indent(out, nbyte + 1);
     out << "code [ \"" << m_code << "\" ]\n";
+    indent(out, nbyte + 1);
     out << "pos [ " << m_pos[0] << " " << m_pos[1] << " " << m_pos[2] << " ]\n";
     LVecBase3f new_hpr;
     if (!temp_hpr_fix) {
@@ -94,14 +97,25 @@ void DNAStreet::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) 
     } else {
         new_hpr = LVecBase3f(m_hpr);
     }
+    indent(out, nbyte + 1);
     out << "hpr [ " << new_hpr[0] << " " << new_hpr[1] << " " << new_hpr[2] << " ]\n";
     if (m_street_color != LVecBase4f(1) || m_sidewalk_color != LVecBase4f(1) || m_curb_color != LVecBase4f(1)) {
-        out << "color [" << m_street_color[0] << " " << m_street_color[1] << " " << m_street_color[2] << " " << m_street_color[3] << " ]\n";
-        out << "color [" << m_sidewalk_color[0] << " " << m_sidewalk_color[1] << " " << m_sidewalk_color[2] << " " << m_sidewalk_color[3] << " ]\n";
-        out << "color [" << m_curb_color[0] << " " << m_curb_color[1] << " " << m_curb_color[2] << " " << m_curb_color[3] << " ]\n";
+        indent(out, nbyte + 1);
+        out << "color [ " << m_street_color[0] << " " << m_street_color[1] << " " << m_street_color[2] << " " << m_street_color[3] << " ]\n";
+        indent(out, nbyte + 1);
+        out << "color [ " << m_sidewalk_color[0] << " " << m_sidewalk_color[1] << " " << m_sidewalk_color[2] << " " << m_sidewalk_color[3] << " ]\n";
+        indent(out, nbyte + 1);
+        out << "color [ " << m_curb_color[0] << " " << m_curb_color[1] << " " << m_curb_color[2] << " " << m_curb_color[3] << " ]\n";
     }
+    indent(out, nbyte + 1);
     out << "texture [ \"" << m_street_texture << "\" ]\n";
+    indent(out, nbyte + 1);
     out << "texture [ \"" << m_sidewalk_texture << "\" ]\n";
+    indent(out, nbyte + 1);
     out << "texture [ \"" << m_curb_texture << "\" ]\n";
+    for (dna_group_vec_t::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+        (*it)->write(out, store, nbyte + 1);
+    }
+    indent(out, nbyte);
     out << "]\n";
 }

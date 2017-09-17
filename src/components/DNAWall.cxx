@@ -3,25 +3,22 @@
 
 TypeHandle DNAWall::_type_handle;
 
-DNAWall::DNAWall(const std::string& name): DNANode(name), m_code(""),
-                                           m_height(0), m_color(LVecBase4f(1))
-{
+DNAWall::DNAWall(const std::string& name): DNANode(name), m_code(""), m_height(0), m_color(LVecBase4f(1)) {
+
 }
 
-DNAWall::~DNAWall()
-{
+DNAWall::~DNAWall() {
+
 }
 
-void DNAWall::make_from_dgi(DatagramIterator& dgi, DNAStorage* store)
-{
+void DNAWall::make_from_dgi(DatagramIterator& dgi, DNAStorage* store) {
     DNANode::make_from_dgi(dgi, store);
     m_code = dgi.get_string();
     m_height = dgi.get_int16() / 100.0;
     m_color = DGI_EXTRACT_COLOR;
 }
 
-void DNAWall::traverse(NodePath& np, DNAStorage* store)
-{
+void DNAWall::traverse(NodePath& np, DNAStorage* store) {
     NodePath result = store->find_node(m_code);
     if (result.is_empty())
     {
@@ -42,4 +39,20 @@ void DNAWall::traverse(NodePath& np, DNAStorage* store)
     
     traverse_children(_np, store);
     DNAFlatBuilding::current_wall_height += m_height;
+}
+
+void DNAWall::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
+    out << "wall [\n";
+    indent(out, nbyte + 1);
+    out << "code [ \"" << m_code << "\" ]\n";
+    indent(out, nbyte + 1);
+    WRITE_IF_NOT_NULL(height);
+    indent(out, nbyte + 1);
+    out << "color [" << m_color[0] << " " << m_color[1] << " " << m_color[2] << " " << m_color[3] << " ]\n";
+    for (dna_group_vec_t::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+        (*it)->write(out, store, nbyte + 1);
+    }
+    indent(out, nbyte);
+    out << "]\n";
 }

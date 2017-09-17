@@ -217,62 +217,44 @@ void DNAStorage::reset_hood()
     reset_block_numbers();
 }
 
-void DNAStorage::store_block_door(block_number_t block_number, NodePath& door)
-{
+void DNAStorage::store_block_door(block_number_t block_number, NodePath& door) {
     m_block_doors[block_number] = door;
 }
 
-void DNAStorage::store_block_zone(block_number_t block_number, zone_id_t zone_id)
-{
+void DNAStorage::store_block_zone(block_number_t block_number, zone_id_t zone_id) {
     m_block_zones[block_number] = zone_id;
 }
 
-void DNAStorage::store_block_number(block_number_t block_number)
-{
+void DNAStorage::store_block_number(block_number_t block_number) {
     m_block_numbers.push_back(block_number);
 }
 
-void DNAStorage::store_block_title(block_number_t block_number,
-                                   const std::string& title)
-{
+void DNAStorage::store_block_title(block_number_t block_number, const std::string& title) {
     m_block_titles[block_number] = title;
 }
 
-void DNAStorage::store_block_article(block_number_t block_number,
-                                     const std::string& article)
-{
+void DNAStorage::store_block_article(block_number_t block_number, const std::string& article) {
     m_block_articles[block_number] = article;
 }
 
-void DNAStorage::store_block_building_type(block_number_t block_number,
-                                           const std::string& bldg_type)
-{
+void DNAStorage::store_block_building_type(block_number_t block_number, const std::string& bldg_type) {
     m_block_building_types[block_number] = bldg_type;
 }
 
-void DNAStorage::store_block(block_number_t block_number, const std::string& title,
-                             const std::string& article, const std::string& bldg_type,
-                             zone_id_t zone_id)
-{
+void DNAStorage::store_block(block_number_t block_number, zone_id_t zone_id) {
     store_block_number(block_number);
-    store_block_title(block_number, title);
-    store_block_article(block_number, article);
-    store_block_building_type(block_number, bldg_type);
     store_block_zone(block_number, zone_id);
 }
 
-size_t DNAStorage::get_num_block_numbers()
-{
+size_t DNAStorage::get_num_block_numbers() {
     return m_block_numbers.size();
 }
 
-bool is_not_digit (char c)
-{
+bool is_not_digit (char c) {
     return std::isdigit(c) == 0;
 }
 
-std::string DNAStorage::get_block(const std::string& name)
-{
+std::string DNAStorage::get_block(const std::string& name) {
     typedef std::string::const_iterator const_iterator_t;
     const const_iterator_t colon_position = std::find(name.begin(), name.end(), ':');
 
@@ -289,13 +271,11 @@ std::string DNAStorage::get_block(const std::string& name)
     return out;
 }
 
-std::string DNAStorage::get_block_building_type(block_number_t block_number)
-{
+std::string DNAStorage::get_block_building_type(block_number_t block_number) {
     return m_block_building_types[block_number];
 }
 
-std::string DNAStorage::get_title_from_block_number(block_number_t block_number)
-{
+std::string DNAStorage::get_title_from_block_number(block_number_t block_number) {
     return m_block_titles[block_number];
 }
 
@@ -305,18 +285,15 @@ NodePath DNAStorage::get_door_pos_hpr_from_block_number(block_number_t block_num
     return m_block_doors[block_number];
 }
 
-size_t DNAStorage::get_block_number_at(size_t index)
-{
+size_t DNAStorage::get_block_number_at(size_t index) {
     return m_block_numbers.at(index);
 }
 
-zone_id_t DNAStorage::get_zone_from_block_number(block_number_t block_number)
-{
+zone_id_t DNAStorage::get_zone_from_block_number(block_number_t block_number) {
     return m_block_zones[block_number];
 }
 
-void DNAStorage::reset_block_numbers()
-{
+void DNAStorage::reset_block_numbers() {
     m_block_numbers.clear();
     m_block_zones.clear();
     m_block_articles.clear();
@@ -325,13 +302,11 @@ void DNAStorage::reset_block_numbers()
     m_block_building_types.clear();
 }
 
-void DNAStorage::reset_block_zones()
-{
+void DNAStorage::reset_block_zones() {
     m_block_zones.clear();
 }
 
-bool DNAStorage::allow_suit_origin(NodePath& np)
-{
+bool DNAStorage::allow_suit_origin(NodePath& np) {
     // NOTICE: game-specific hack
     if (np.get_name().find("gag_shop") != std::string::npos)
         return false;
@@ -555,9 +530,6 @@ void DNAStorage::write_pdna(Datagram& dg)
         block_number_t block_number = *it;
         dg.add_uint8(block_number);
         dg.add_uint16(m_block_zones[block_number]);
-        dg.add_string(m_block_titles[block_number]);
-        dg.add_string(m_block_articles[block_number]);
-        dg.add_string(m_block_building_types[block_number]);
     }
     
     // Suit points

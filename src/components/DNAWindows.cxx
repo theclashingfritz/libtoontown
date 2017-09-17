@@ -9,16 +9,14 @@ TypeHandle DNAWindows::_type_handle;
 
 DNAWindows::DNAWindows(const std::string& name): DNAGroup(name), m_code(""),
                                                  m_color(LVecBase4f(1)),
-                                                 m_window_count(1)
-{
+                                                 m_window_count(1) {
+
 }
 
-DNAWindows::~DNAWindows()
-{
+DNAWindows::~DNAWindows() {
 }
 
-void DNAWindows::make_from_dgi(DatagramIterator& dgi, DNAStorage* store)
-{
+void DNAWindows::make_from_dgi(DatagramIterator& dgi, DNAStorage* store) {
     DNAGroup::make_from_dgi(dgi, store);
     m_code = dgi.get_string();
     m_color = DGI_EXTRACT_COLOR;
@@ -82,11 +80,9 @@ void DNAWindows::traverse(NodePath& np, DNAStorage* store)
     }
 }
 
-void DNAWindows::make_windows(float x, float y, NodePath& parent_node,
-                              const std::string& code, float scale,
-                              LVecBase4f& color, DNAStorage* store,
-                              bool flip)
-{
+void DNAWindows::make_windows(float x, float y, NodePath& parent_node, const std::string& code, 
+                              float scale, LVecBase4f& color, DNAStorage* store, bool flip) {
+
     std::stringstream ss;
     ss << code.substr(0, code.size() - 1);
     ss << (flip ? "l" : "r");
@@ -106,3 +102,17 @@ void DNAWindows::make_windows(float x, float y, NodePath& parent_node,
     window.set_depth_offset(0);
 }
 
+void DNAWindows::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
+    out << "windows [\n";
+    indent(out, nbyte + 1);
+    out << "code [ \"" << m_code << "\" ]\n";
+    if (m_color != LVecBase4f(1)) {
+        indent(out, nbyte + 1);
+        out << "color [ " << m_color[0] << " " << m_color[1] << " " << m_color[2] << " " << m_color[3] << " ]\n";
+    }
+    indent(out, nbyte + 1);
+    out << "count [ " << m_window_count << " ]\n";
+    indent(out, nbyte);
+    out << "]\n";
+}

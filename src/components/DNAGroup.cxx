@@ -63,7 +63,7 @@ void DNAGroup::traverse_children(NodePath& np, DNAStorage* store)
 void DNAGroup::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
     out << "group \"" << m_name << "\" [\n";
     for (dna_group_vec_t::iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        (*it)->write(out, store, nbyte);
+        (*it)->write(out, store, nbyte + 1);
     }
     out << "]\n";
 }

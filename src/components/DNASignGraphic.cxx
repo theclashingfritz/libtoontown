@@ -39,26 +39,35 @@ void DNASignGraphic::traverse(NodePath& np, DNAStorage* store) {
 }
 
 void DNASignGraphic::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
     out << "graphic [\n";
     
     if (m_code.size()) {
+        indent(out, nbyte + 1);
         out << "code [ \"" << m_code << "\" ]\n";
     }
     
+    indent(out, nbyte + 1);
     WRITE_IF_NOT_NULL(width);
+    indent(out, nbyte + 1);
     WRITE_IF_NOT_NULL(height);
     
     if (m_color != LVecBase4f(1, 1, 1, 1)) {
+        indent(out, nbyte + 1);
         out << "color [ " << m_color.get_x() << " "
                      << m_color.get_y() << " " << m_color.get_z()
                      << " " << m_color.get_w() << " ]\n";
     }
     
     if (m_pos != LVecBase3f(0) || m_hpr != LVecBase3f(0) || m_scale != LVecBase3f(1)) {
+        indent(out, nbyte + 1);
         out << "pos [ " << m_pos[0] << " " << m_pos[1] << " " << m_pos[2] << "]\n";
+        indent(out, nbyte + 1);
         out << "hpr [ " << m_hpr[0] << " " << m_hpr[1] << " " << m_hpr[2] << "]\n";
+        indent(out, nbyte + 1);
         out << "scale [ " << m_scale[0] << " " << m_scale[1] << " " << m_scale[2] << "]\n";
     }
     
+    indent(out, nbyte);
     out << "]\n";
 }

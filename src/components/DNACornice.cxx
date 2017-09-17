@@ -5,31 +5,27 @@
 
 TypeHandle DNACornice::_type_handle;
 
-DNACornice::DNACornice(const std::string& name): DNAGroup(name), m_code(""),
-                                                 m_color(LVecBase4f(1))
-{
+DNACornice::DNACornice(const std::string& name): DNAGroup(name), m_code(""), m_color(LVecBase4f(1)) {
+    
 }
 
-DNACornice::~DNACornice()
-{
+DNACornice::~DNACornice() {
+    
 }
 
-void DNACornice::make_from_dgi(DatagramIterator& dgi, DNAStorage* store)
-{
+void DNACornice::make_from_dgi(DatagramIterator& dgi, DNAStorage* store) {
     DNAGroup::make_from_dgi(dgi, store);
     m_code = dgi.get_string();
     m_color = DGI_EXTRACT_COLOR;
 }
 
-void DNACornice::traverse(NodePath& np, DNAStorage* store)
-{
+void DNACornice::traverse(NodePath& np, DNAStorage* store) {
     float parent_x_scale = np.get_parent().get_scale().get_x();
     float parent_z_scale = np.get_scale().get_z();
     float scale_ratio = parent_x_scale / parent_z_scale;
     
     NodePath node = store->find_node(m_code);
-    if (node.is_empty())
-    {
+    if (node.is_empty()) {
         raise_code_not_found();
         return;
     }
@@ -48,4 +44,17 @@ void DNACornice::traverse(NodePath& np, DNAStorage* store)
     internal_node.set_z(node.get_scale().get_z());
     internal_node.set_color(m_color);
     internal_node.flatten_strong();
+}
+
+void DNACornice::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
+    out << "cornice [\n";
+    indent(out, nbyte + 1);
+    out << "code [ \"" << m_code << "\" ]\n";
+    if (m_color != LVecBase4f(1)) {
+        indent(out, nbyte + 1);
+        out << "color [ " << m_color[0] << " " << m_color[1] << " " << m_color[2] << " " << m_color[3] << " ]\n";
+    }
+    indent(out, nbyte);
+    out << "]\n";
 }

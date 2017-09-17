@@ -110,24 +110,26 @@ void DNAVisGroup::traverse(NodePath& np, DNAStorage* store) {
 }
 
 void DNAVisGroup::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
     out << "visgroup \"" << m_name << "\" [\n";
+    indent(out, nbyte + 1);
     out << "vis [ ";
     for (visibles_vec_t::iterator it = m_visibles.begin(); it != m_visibles.end(); ++it) {
+        indent(out, nbyte + 1);
         out << "\"" << *it << "\" ";
     }
     out << "]\n" << std::endl;
     for (suit_edge_vec_t::iterator it = m_suit_edges.begin(); it != m_suit_edges.end(); ++it) {
         DNASuitEdge *edge = *it;
-        out << "suit_edge [ " << edge->get_start_point()->get_index() << " " << edge->get_end_point()->get_index() << " ]\n";
+        edge->write(out, store, nbyte + 1);
     }
     for (battle_cell_vec_t::iterator it = m_battle_cells.begin(); it != m_battle_cells.end(); ++it) {
         DNABattleCell *cell = *it;
-        out << "battle_cell [ " << cell->get_width() << " " << cell->get_height()
-                     << " " << cell->get_pos().get_x() << " " << cell->get_pos().get_y()
-                     << " " << cell->get_pos().get_z() << " ]\n";
+        cell->write(out, store, nbyte + 1);
     }
     for (dna_group_vec_t::iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        (*it)->write(out, store, nbyte);
+        (*it)->write(out, store, nbyte + 1);
     }
+    indent(out, nbyte);
     out << "]\n";
 }

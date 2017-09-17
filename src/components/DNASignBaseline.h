@@ -4,7 +4,6 @@
 #include "DNANode.h"
 
 #define DUMP_IF_NOT_NULL(X) if (m_##X) INDENTED_OUT << #X " [ " << m_##X << " ]" << std::endl;
-#define WRITE_IF_NOT_NULL(X) if (m_##X) out << #X " [ " << m_##X << " ]\n";
 
 class EXPCL_DNA DNASignBaseline : public DNANode
 {

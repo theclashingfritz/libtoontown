@@ -16,10 +16,7 @@ DNAFlatBuilding::~DNAFlatBuilding()
 {
 }
         
-void DNAFlatBuilding::setup_flat(NodePath& np, DNAStorage* store, const char chr,
-                                 const std::string& wall_code)
-                                 
-{
+void DNAFlatBuilding::setup_flat(NodePath& np, DNAStorage* store, const char chr, const std::string& wall_code) {
     if (m_name.substr(0, 2) != "tb")
         return;
         
@@ -60,25 +57,21 @@ void DNAFlatBuilding::setup_flat(NodePath& np, DNAStorage* store, const char chr
     node.stash();
 }
                                  
-void DNAFlatBuilding::setup_suit_flat_building(NodePath& np, DNAStorage* store)
-{
+void DNAFlatBuilding::setup_suit_flat_building(NodePath& np, DNAStorage* store) {
     setup_flat(np, store, 's', "suit_wall");
 }
 
-void DNAFlatBuilding::setup_cogdo_flat_building(NodePath& np, DNAStorage* store)
-{
+void DNAFlatBuilding::setup_cogdo_flat_building(NodePath& np, DNAStorage* store) {
     setup_flat(np, store, 'c', "cogdo_wall");
 }
 
-void DNAFlatBuilding::make_from_dgi(DatagramIterator& dgi, DNAStorage* store)
-{
+void DNAFlatBuilding::make_from_dgi(DatagramIterator& dgi, DNAStorage* store) {
     DNANode::make_from_dgi(dgi, store);
     m_width = dgi.get_uint16() / 10.0;
     m_has_door = dgi.get_bool();
 }
 
-void DNAFlatBuilding::traverse(NodePath& np, DNAStorage* store)
-{
+void DNAFlatBuilding::traverse(NodePath& np, DNAStorage* store) {
     DNAFlatBuilding::current_wall_height = 0;
     NodePath node = np.attach_new_node(m_name);
     
@@ -160,4 +153,27 @@ void DNAFlatBuilding::traverse(NodePath& np, DNAStorage* store)
         wall_holder.remove_node();
         wall_decal.remove_node();
     }
+}
+
+
+void DNAFlatBuilding::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
+    out << "flat_building \"" << m_name << "\" [\n";
+    indent(out, nbyte + 1);
+    out << "pos [ " << m_pos[0] << " " << m_pos[1] << " " << m_pos[2] << " ]\n";
+    LVecBase3f new_hpr;
+    if (!temp_hpr_fix) {
+        new_hpr = old_to_new_hpr(m_hpr);
+    } else {
+        new_hpr = LVecBase3f(m_hpr);
+    }
+    indent(out, nbyte + 1);
+    out << "hpr [ " << new_hpr[0] << " " << new_hpr[1] << " " << new_hpr[2] << " ]\n";
+    indent(out, nbyte + 1);
+    WRITE_IF_NOT_NULL(width);
+    for (dna_group_vec_t::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+        (*it)->write(out, store, nbyte + 1);
+    }
+    indent(out, nbyte);
+    out << "]\n";
 }

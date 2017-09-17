@@ -5,26 +5,29 @@
 TypeHandle DNALandmarkBuilding::_type_handle;
 
 DNALandmarkBuilding::DNALandmarkBuilding(const std::string& name): DNANode(name), m_code(""),
+                                                                   m_building_type(""),
+                                                                   m_title(""),
+                                                                   m_article(""),
                                                                    m_wall_color(LVecBase4f(1))
 {
 }
 
-DNALandmarkBuilding::~DNALandmarkBuilding()
-{
+DNALandmarkBuilding::~DNALandmarkBuilding() {
+    
 }
 
-void DNALandmarkBuilding::make_from_dgi(DatagramIterator& dgi, DNAStorage* store)
-{
+void DNALandmarkBuilding::make_from_dgi(DatagramIterator& dgi, DNAStorage* store) {
     DNANode::make_from_dgi(dgi, store);   
     m_code = dgi.get_string();
+    m_building_type = dgi.get_string();
+    m_title = dgi.get_string();
+    m_article = dgi.get_string();
     m_wall_color = DGI_EXTRACT_COLOR;
 }
 
-void DNALandmarkBuilding::traverse(NodePath& np, DNAStorage* store)
-{
+void DNALandmarkBuilding::traverse(NodePath& np, DNAStorage* store) {
     NodePath result = store->find_node(m_code);
-    if (result.is_empty())
-    {
+    if (result.is_empty()) {
         raise_code_not_found(m_code.c_str());
         return;
     }
@@ -38,12 +41,12 @@ void DNALandmarkBuilding::traverse(NodePath& np, DNAStorage* store)
 
     traverse_children(_np, store);
 
-    if (m_name.find("gag_shop") == std::string::npos)
+    if (get_building_type() != "gagshop") {
         _np.flatten_strong();
+    }
 }
 
-void DNALandmarkBuilding::setup_suit_building_origin(NodePath& a, NodePath& b)
-{
+void DNALandmarkBuilding::setup_suit_building_origin(NodePath& a, NodePath& b) {
     if ((m_name.substr(0, 2) == "tb") && (isdigit(m_name[2])) && (m_name.find(":") != std::string::npos))
     {
         std::stringstream ss;
@@ -63,4 +66,40 @@ void DNALandmarkBuilding::setup_suit_building_origin(NodePath& a, NodePath& b)
             node.set_name(ss.str());
         }
     }
+}
+
+void DNALandmarkBuilding::write(std::ostream& out, DNAStorage *store, unsigned int nbyte) {
+    indent(out, nbyte);
+    out << "landmark_building \"" << m_name << "\" [\n";
+    indent(out, nbyte + 1);
+    out << "code [ \"" << m_code << "\" ]\n";
+    if (get_building_type() != "") {
+        indent(out, nbyte + 1);
+        out << "building_type [ \"" << get_building_type() << "\" ]\n";
+    }
+    if (m_article != "") {
+        indent(out, nbyte + 1);
+        out << "article [ \"" << m_article << "\" ]\n";
+    }
+    indent(out, nbyte + 1);
+    out << "title [ \"" << m_title << "\" ]\n";
+    indent(out, nbyte + 1);
+    out << "pos [ " << m_pos[0] << " " << m_pos[1] << " " << m_pos[2] << " ]\n";
+    LVecBase3f new_hpr;
+    if (!temp_hpr_fix) {
+        new_hpr = old_to_new_hpr(m_hpr);
+    } else {
+        new_hpr = LVecBase3f(m_hpr);
+    }
+    indent(out, nbyte + 1);
+    out << "hpr [ " << new_hpr[0] << " " << new_hpr[1] << " " << new_hpr[2] << " ]\n";
+    if (m_wall_color != LVecBase4f(1)) {
+        indent(out, nbyte + 1);
+        out << "color [ " << m_wall_color[0] << " " << m_wall_color[1] << " " << m_wall_color[2] << " " << m_wall_color[3] << " ]\n";
+    }
+    for (dna_group_vec_t::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+        (*it)->write(out, store, nbyte + 1);
+    }
+    indent(out, nbyte);
+    out << "]\n";
 }

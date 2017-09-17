@@ -15,6 +15,7 @@ class EXPCL_DNA DNAFlatDoor : public DNADoor
     public:
         virtual void make_from_dgi(DatagramIterator& dgi, DNAStorage* store);
         virtual void traverse(NodePath& np, DNAStorage* store);
+        virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
         
     TYPE_HANDLE(DNAFlatDoor, DNADoor);
 };

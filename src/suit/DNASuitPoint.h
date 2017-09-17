@@ -26,7 +26,7 @@ class EXPCL_DNA DNASuitPoint : public TypedObject {
         void set_point_type(const std::string& point_type);
         
     public:
-        virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
+        virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 1);
               
     PROPERTY(point_index_t, index);
     PROPERTY(PointType, point_type);

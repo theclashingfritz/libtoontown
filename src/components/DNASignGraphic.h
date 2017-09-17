@@ -3,8 +3,6 @@
 
 #include "DNAProp.h"
 
-#define WRITE_IF_NOT_NULL(X) if (m_##X) out << #X " [ " << m_##X << " ]\n";
-
 class EXPCL_DNA DNASignGraphic : public DNAProp
 {
     PUBLISHED:

@@ -88,15 +88,10 @@ class EXPCL_DNA DNAStorage
         void store_block_door(block_number_t block_number, NodePath& door);
         void store_block_zone(block_number_t block_number, zone_id_t zone_id);
         void store_block_number(block_number_t block_number);
-        void store_block_title(block_number_t block_number,
-                               const std::string& title);
-        void store_block_article(block_number_t block_number,
-                                 const std::string& article);
-        void store_block_building_type(block_number_t block_number,
-                                       const std::string& bldg_type);
-        void store_block(block_number_t block_number, const std::string& title,
-                         const std::string& article, const std::string& bldg_type,
-                         zone_id_t zone_id);
+        void store_block_title(block_number_t block_number, const std::string& title);
+        void store_block_article(block_number_t block_number, const std::string& article);
+        void store_block_building_type(block_number_t block_number, const std::string& bldg_type);
+        void store_block(block_number_t block_number, zone_id_t zone_id);
     
         size_t get_num_block_numbers();
         std::string get_block(const std::string& name);

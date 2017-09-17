@@ -38,6 +38,7 @@ class EXPCL_DNA DNAFlatBuilding : public DNANode
     public:
         virtual void make_from_dgi(DatagramIterator& dgi, DNAStorage* store);
         virtual void traverse(NodePath& np, DNAStorage* store);
+        virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
         
         static int current_wall_height;
     

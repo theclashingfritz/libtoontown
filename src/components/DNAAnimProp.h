@@ -37,6 +37,7 @@ class EXPCL_DNA DNAAnimProp : public DNAProp
     public:
         virtual void make_from_dgi(DatagramIterator& dgi, DNAStorage* store);
         virtual void traverse(NodePath& np, DNAStorage* store);
+        virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
         
     PROPERTY_STRING(anim_name);
         

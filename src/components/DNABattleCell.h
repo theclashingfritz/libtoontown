@@ -7,17 +7,21 @@
 #include <typedObject.h>
 #include <nodePath.h>
 
+class DNAStorage;
+
 class EXPCL_DNA DNABattleCell : public TypedObject
 {
     PUBLISHED:
         DNABattleCell(float width, float height, LPoint3f pos);
         ~DNABattleCell();
 
-        INLINE void set_width_height(float width, float height)
-        {
+        INLINE void set_width_height(float width, float height) {
             set_width(width);
             set_height(height);
         }
+        
+    public:
+        virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
         
     PROPERTY(float, width);
     PROPERTY(float, height);

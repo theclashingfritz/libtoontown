@@ -117,8 +117,7 @@ void DNALoader::handle_storage_data(DatagramIterator& dgi)
     }
     
     num_nodes = dgi.get_uint16();
-    for (i = 0; i < num_nodes; i++)
-    {  
+    for (i = 0; i < num_nodes; i++) {  
         std::string filename, code, search;
         code = dgi.get_string();
         filename = dgi.get_string();
@@ -128,21 +127,15 @@ void DNALoader::handle_storage_data(DatagramIterator& dgi)
     
     // Blocks
     unsigned short num_blocks = dgi.get_uint16();
-    for (i = 0; i < num_blocks; i++)
-    {
+    for (i = 0; i < num_blocks; i++) {
         block_number_t number = dgi.get_uint8();
         zone_id_t zone = dgi.get_uint16();
-        std::string title = dgi.get_string();
-        std::string article = dgi.get_string();
-        std::string bldg_type = dgi.get_string();
-        
-        m_cur_store->store_block(number, title, article, bldg_type, zone);
+        m_cur_store->store_block(number, zone);
     }
 
     // Suit points
     unsigned short num_points = dgi.get_uint16();
-    for (i = 0; i < num_points; i++)
-    {
+    for (i = 0; i < num_points; i++) {
         point_index_t index = dgi.get_uint16();
         DNASuitPoint::PointType point_type = (DNASuitPoint::PointType)dgi.get_uint8();
 

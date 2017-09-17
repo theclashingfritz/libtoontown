@@ -7,6 +7,7 @@
 #include <pandabase.h>
 #include <nodepath.h>
 #include <luse.h>
+#include <indent.h>
 
 #define COMPCODE_GROUP 1
 #define COMPCODE_VISGROUP 2
@@ -27,6 +28,9 @@
 #define COMPCODE_FLAT_DOOR 18
 #define COMPCODE_STREET 19
 #define COMPCODE_RETURN 255
+
+#define DUMP_IF_NOT_NULL(X) if (m_##X) INDENTED_OUT << #X " [ " << m_##X << " ]" << std::endl;
+#define WRITE_IF_NOT_NULL(X) if (m_##X) out << #X " [ " << m_##X << " ]\n";
 
 typedef pvector<LVecBase4f> color_tuple_t; // (LVecBase4f, LVecBase4f)
 typedef pvector<color_tuple_t> color_tuple_tuple_t; // ((LVecBase4f, LVecBase4f), (LVecBase4f, LVecBase4f))

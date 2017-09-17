@@ -43,12 +43,16 @@ class EXPCL_DNA DNALandmarkBuilding : public DNANode
     public:
         virtual void make_from_dgi(DatagramIterator& dgi, DNAStorage* store);
         virtual void traverse(NodePath& np, DNAStorage* store);
+        virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
         
     protected:
         void setup_suit_building_origin(NodePath& a, NodePath& b);
         
     PROPERTY(LVecBase4f, wall_color);
     PROPERTY_STRING(code);
+    PROPERTY_STRING(building_type)
+    PROPERTY_STRING(title)
+    PROPERTY_STRING(article)
     
     TYPE_HANDLE(DNALandmarkBuilding, DNANode);
 };
