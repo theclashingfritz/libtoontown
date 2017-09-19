@@ -51,8 +51,10 @@ class EXPCL_DNA DNAGroup : public TypedReferenceCount {
 
     public:
         virtual void make_from_dgi(DatagramIterator& dgi, DNAStorage* store);
-        virtual void traverse(NodePath& np, DNAStorage* store);
+        virtual void traverse(NodePath &np, DNAStorage *store);
         virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
+        
+        NodePath top_level_traverse(NodePath &np, DNAStorage *store, int store_group = 0);
         
     protected:
         void raise_code_not_found();

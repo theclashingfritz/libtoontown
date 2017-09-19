@@ -33,6 +33,7 @@ class EXPCL_DNA DNAData : public DNAGroup {
     public:
         void pre_write();
         virtual void write(std::ostream& out, DNAStorage *store, unsigned int nbyte = 0);
+        bool read(istream &file_stream, ostream &notify_stream);
         
     private:
         CoordinateSystem cord_system;

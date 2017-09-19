@@ -1,5 +1,7 @@
 #include "DNAGroup.h"
 
+#include "DNAStorage.h"
+
 TypeHandle DNAGroup::_type_handle;
 
 DNAGroup::DNAGroup(const std::string& name): m_name(name), m_parent(NULL),
@@ -37,10 +39,19 @@ void DNAGroup::make_from_dgi(DatagramIterator& dgi, DNAStorage* store)
     m_name = dgi.get_string();
 }
 
-void DNAGroup::traverse(NodePath& np, DNAStorage* store)
-{
+void DNAGroup::traverse(NodePath& np, DNAStorage* store) {
     NodePath _np = np.attach_new_node(m_name);
     traverse_children(_np, store);
+}
+
+NodePath DNAGroup::top_level_traverse(NodePath &np, DNAStorage *store, int store_group) {
+    NodePath _np = np.attach_new_node(m_name);
+    PointerTo<PandaNode> node = _np.node();
+    traverse_children(_np, store);
+    if (store_group) {
+        store->store_DNA_group(node, this);
+    }
+    return np;
 }
 
 void DNAGroup::raise_code_not_found()

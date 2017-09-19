@@ -46,6 +46,10 @@ bool DNAData::resolve_dna_filename(Filename file, DSearchPath s_path) {
     }
 }
 
+bool DNAData::read(istream &file_stream, ostream &notify_stream) {
+    return false;
+}
+
 CoordinateSystem DNAData::get_coordinate_system() {
     return cord_system;
 }

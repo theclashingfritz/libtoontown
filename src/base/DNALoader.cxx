@@ -24,42 +24,87 @@
 #include <compress_string.h>
 #include <sstream>
 
-DNALoader::DNALoader(): m_cur_comp(NULL), m_cur_store(NULL)
-{
-}
-
-DNALoader::~DNALoader()
-{
-}
-
-NodePath DNALoader::load_DNA_file(DNAStorage* store, const Filename& file)
-{
-    load_DNA_file_base(store, file);
-    dna_cat.debug() << "load_DNA_file_base completed" << std::endl;
-
-    if (!m_cur_comp)
-        return NodePath(); // Empty NodePath
+DNALoader::DNALoader(): m_cur_comp(NULL), m_cur_store(NULL), m_data(&DNAData(std::string("loader_data"))) {
     
-    NodePath np = NodePath("dna");
-    m_cur_comp->traverse(np, m_cur_store);
+}
 
-    m_cur_store = NULL;
-    delete m_cur_comp; // We don't need it anymore
-    m_cur_comp = NULL;
+DNALoader::~DNALoader() {
+    
+}
 
+NodePath DNALoader::load_DNA_file(DNAStorage* store, const Filename& file, CoordinateSystem coords, bool store_group, bool is_pdna) {
+    NodePath np;
+    if (is_pdna) {
+        load_DNA_file_base(store, file);
+        dna_cat.debug() << "load_DNA_file_base completed" << std::endl;
+
+        if (!m_cur_comp) {
+            return NodePath(); // Empty NodePath
+        }
+        
+        np = NodePath("dna");
+        m_cur_comp->traverse(np, m_cur_store);
+
+        m_cur_store = NULL;
+        delete m_cur_comp; // We don't need it anymore
+        m_cur_comp = NULL;
+    } else {
+        if (!m_cur_comp) {
+            return NodePath(); // Empty NodePath
+        }
+        VirtualFileSystem *vfs = VirtualFileSystem::get_global_ptr();
+        Filename found(file);
+        vfs->resolve_filename(found, get_model_path());
+        
+        if (!vfs->exists(found)) {
+            dna_cat.error() << "Could not open " << file << "for reading.\n" << std::endl;
+            return NodePath();
+        } 
+        m_data->set_dna_storage(*store);
+        m_data->set_dna_filename(const_cast<Filename&>(file));
+        m_data->set_coordinate_system(coords);
+        istream *file_stream = vfs->open_read_file(found, 1);
+        bool success = false;
+        if (file_stream != nullptr && file_stream != NULL) {
+            success = m_data->read(*file_stream, (ostream &)(Notify::out));
+        }
+        vfs->close_read_file(file_stream);
+        if (success) {
+            np = NodePath("dna");
+            dna_cat.debug() << "About to call loader.build_graph\n" << std::endl;
+            build_graph(np, m_data->get_dna_storage(), store_group);
+        } else {
+            dna_cat.error() << "Error reading " << file << "\n" << std::endl;
+            return NodePath();
+        }
+    }
     return np;
 }
 
-DNAGroup* DNALoader::load_DNA_file_AI(DNAStorage* store, const Filename& file)
-{
+DNAGroup* DNALoader::load_DNA_file_AI(DNAStorage* store, const Filename& file) {
     load_DNA_file_base(store, file);
     dna_cat.debug() << "load_DNA_file_base completed" << std::endl;
     m_cur_store = NULL;
     return m_cur_comp;
 }
 
-void DNALoader::handle_storage_data(DatagramIterator& dgi)
-{
+PointerTo<PandaNode> DNALoader::build_graph(NodePath &path, DNAStorage *store, int store_group) {
+    if (!m_cur_comp) {
+        dna_cat.debug() << "DNA File contained no geometry, returning empty node." << std::endl;
+        return &PandaNode("null_node");
+    }
+   
+    NodePath new_path = m_cur_comp->top_level_traverse(path, store, store_group);
+    PointerTo<PandaNode> node = new_path.node();
+    
+    m_cur_store = NULL;
+    delete m_cur_comp; // We don't need it anymore
+    m_cur_comp = NULL;
+
+    return node;
+}
+
+void DNALoader::handle_storage_data(DatagramIterator& dgi) {
     unsigned short i;
     
     // Catalog codes
@@ -257,8 +302,7 @@ void DNALoader::load_DNA_file_base(DNAStorage* store, const Filename& file)
     Filename found(file);
     vfs->resolve_filename(found, get_model_path());
     
-    if (!vfs->exists(found))
-    {
+    if (!vfs->exists(found)) {
         dna_cat.error() << "unable to open " << file << std::endl;
         return;
     }
